@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "配送実績管理" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="min-h-screen bg-slate-50 text-slate-800">
+    <header class="border-b border-slate-200 bg-white">
+      <nav class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-5 py-4">
+        <%= link_to "配送実績管理", root_path, class: "text-xl font-bold text-sky-700" %>
+        <% if user_signed_in? %>
+          <div class="flex flex-wrap items-center gap-4 text-sm">
+            <%= link_to "配送実績", delivery_records_path, class: "hover:text-sky-700" %>
+            <%= link_to "取引先", clients_path, class: "hover:text-sky-700" %>
+            <%= link_to "店舗", stores_path, class: "hover:text-sky-700" %>
+            <% if current_user.admin? %>
+              <%= link_to "仮登録審査", admin_reviews_path, class: "font-medium text-amber-700" %>
+              <details class="relative">
+                <summary class="cursor-pointer">マスタ管理</summary>
+                <div class="absolute right-0 z-20 mt-2 grid w-48 gap-2 rounded-lg border bg-white p-3 shadow-lg">
+                  <%= link_to "コース", courses_path %><%= link_to "配送会社", delivery_companies_path %>
+                  <%= link_to "車両", vehicles_path %><%= link_to "ドライバー", drivers_path %>
+                  <%= link_to "荷物カテゴリ", cargo_categories_path %><%= link_to "カテゴリグループ", cargo_category_groups_path %>
+                  <%= link_to "単位", units_path %><%= link_to "按分比率", allocation_ratios_path %>
+                </div>
+              </details>
+            <% end %>
+            <span class="text-slate-500"><%= current_user.name %></span>
+            <%= button_to "ログアウト", destroy_user_session_path, method: :delete, class: "text-slate-600 hover:text-red-600" %>
+          </div>
+        <% end %>
+      </nav>
+    </header>
+    <main class="mx-auto flex max-w-7xl px-5 py-8">
+      <div class="w-full">
+        <% if notice.present? %><p class="mb-5 rounded-lg bg-emerald-50 px-4 py-3 text-emerald-800"><%= notice %></p><% end %>
+        <% if alert.present? %><p class="mb-5 rounded-lg bg-red-50 px-4 py-3 text-red-800"><%= alert %></p><% end %>
+      <%= yield %>
+      </div>
+    </main>
+  </body>
+</html>

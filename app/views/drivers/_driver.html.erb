@@ -1,0 +1,22 @@
+<div id="<%= dom_id driver %>" class="w-full sm:w-auto my-5 space-y-5">
+  <div>
+    <strong class="block font-medium mb-1">Code:</strong>
+    <%= driver.code %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Name:</strong>
+    <%= driver.name %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Delivery company:</strong>
+    <%= driver.delivery_company_id %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Active:</strong>
+    <%= driver.active? ? "Yes" : "No" %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Sort order:</strong>
+    <%= driver.sort_order %>
+  </div>
+</div>

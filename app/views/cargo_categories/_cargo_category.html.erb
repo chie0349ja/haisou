@@ -1,0 +1,22 @@
+<div id="<%= dom_id cargo_category %>" class="w-full sm:w-auto my-5 space-y-5">
+  <div>
+    <strong class="block font-medium mb-1">Code:</strong>
+    <%= cargo_category.code %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Name:</strong>
+    <%= cargo_category.name %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Cargo category group:</strong>
+    <%= cargo_category.cargo_category_group_id %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Active:</strong>
+    <%= cargo_category.active? ? "Yes" : "No" %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Sort order:</strong>
+    <%= cargo_category.sort_order %>
+  </div>
+</div>

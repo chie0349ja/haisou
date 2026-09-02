@@ -1,0 +1,18 @@
+<div id="<%= dom_id delivery_company %>" class="w-full sm:w-auto my-5 space-y-5">
+  <div>
+    <strong class="block font-medium mb-1">Code:</strong>
+    <%= delivery_company.code %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Name:</strong>
+    <%= delivery_company.name %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Active:</strong>
+    <%= delivery_company.active? ? "Yes" : "No" %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Sort order:</strong>
+    <%= delivery_company.sort_order %>
+  </div>
+</div>

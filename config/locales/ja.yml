@@ -1,0 +1,32 @@
+ja:
+  date:
+    formats:
+      default: "%Y/%m/%d"
+  time:
+    formats:
+      default: "%Y/%m/%d %H:%M"
+  activerecord:
+    models:
+      delivery_record: 配送実績
+      client: 取引先
+      store: 店舗
+    attributes:
+      delivery_record:
+        service_date: 運行日
+        course: コース
+        delivery_company: 配送会社
+        vehicle: 車両
+        driver: ドライバー
+        cargo_category: 荷物カテゴリ
+        client: 取引先
+        store: 店舗
+        volume: 物量
+        unit: 単位
+        departure_at: 出発日時
+        arrival_at: 到着日時
+  errors:
+    format: "%{attribute}%{message}"
+    messages:
+      blank: を入力してください
+      taken: は既に使用されています
+      greater_than: は%{count}より大きい値にしてください

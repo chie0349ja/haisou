@@ -1,0 +1,41 @@
+<% content_for :title, "配送実績" %>
+
+<div class="w-full">
+  <div class="flex flex-wrap justify-between gap-4 items-center">
+    <div>
+      <h1 class="font-bold text-3xl text-slate-900">配送実績</h1>
+      <p class="mt-1 text-slate-500">登録済みの運行を日付・コース・取引先で確認できます。</p>
+    </div>
+    <%= link_to "配送実績を登録", new_delivery_record_path, class: "rounded-lg px-4 py-3 bg-sky-600 hover:bg-sky-500 text-white font-medium shadow-sm" %>
+  </div>
+
+  <%= form_with url: delivery_records_path, method: :get, class: "mt-6 grid gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm md:grid-cols-4" do |form| %>
+    <%= form.date_field :service_date, value: params[:service_date], class: "rounded-lg border-slate-300", aria: { label: "運行日" } %>
+    <%= form.collection_select :course_id, Course.active.ordered, :id, :name, { include_blank: "すべてのコース", selected: params[:course_id] }, class: "rounded-lg border-slate-300" %>
+    <%= form.collection_select :client_id, Client.active.order(:name), :id, :name, { include_blank: "すべての取引先", selected: params[:client_id] }, class: "rounded-lg border-slate-300" %>
+    <%= form.submit "絞り込む", class: "rounded-lg bg-slate-800 px-4 py-2 text-white cursor-pointer" %>
+  <% end %>
+
+  <div class="mt-6 overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
+    <table class="min-w-full divide-y divide-slate-200 text-sm">
+      <thead class="bg-slate-50 text-left text-slate-600"><tr>
+        <th class="px-4 py-3">運行日</th><th class="px-4 py-3">コース</th><th class="px-4 py-3">配送会社 / 車両</th>
+        <th class="px-4 py-3">ドライバー</th><th class="px-4 py-3">取引先 / 店舗</th><th class="px-4 py-3">物量</th><th class="px-4 py-3"></th>
+      </tr></thead>
+      <tbody class="divide-y divide-slate-100">
+        <% @delivery_records.each do |record| %>
+          <tr class="hover:bg-slate-50">
+            <td class="px-4 py-3 whitespace-nowrap"><%= l record.service_date %><% if record.overnight? %><span class="ml-1 rounded bg-amber-100 px-1.5 py-0.5 text-xs text-amber-800">日跨ぎ</span><% end %></td>
+            <td class="px-4 py-3"><%= record.course.name %></td>
+            <td class="px-4 py-3"><%= record.delivery_company.name %><br><span class="text-slate-500"><%= record.vehicle.code %></span></td>
+            <td class="px-4 py-3"><%= record.driver.name %></td>
+            <td class="px-4 py-3"><%= record.client.name %><% if record.store %><br><span class="text-slate-500"><%= record.store.name %></span><% end %></td>
+            <td class="px-4 py-3 whitespace-nowrap"><%= number_with_precision(record.volume, precision: 2, strip_insignificant_zeros: true) %> <%= record.unit.name %></td>
+            <td class="px-4 py-3 whitespace-nowrap"><%= link_to "詳細", record, class: "text-sky-700 hover:underline" %> <%= link_to "編集", edit_delivery_record_path(record), class: "ml-3 text-sky-700 hover:underline" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <% if @delivery_records.empty? %><p class="p-10 text-center text-slate-500">該当する配送実績はありません。</p><% end %>
+  </div>
+</div>

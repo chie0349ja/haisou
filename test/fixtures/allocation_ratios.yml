@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  cargo_category_group: one
+  ratio: 9.99
+  effective_from: 2026-09-02
+  effective_to: 2026-09-02
+
+two:
+  cargo_category_group: two
+  ratio: 9.99
+  effective_from: 2026-09-02
+  effective_to: 2026-09-02

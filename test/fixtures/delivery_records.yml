@@ -1,0 +1,33 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  service_date: 2026-09-02
+  course: one
+  delivery_company: one
+  vehicle: one
+  driver: one
+  cargo_category: one
+  client: one
+  store: one
+  volume: 9.99
+  unit: one
+  departure_at: 2026-09-02 22:24:47
+  arrival_at: 2026-09-02 22:24:47
+  created_by_id: 
+  updated_by_id: 
+
+two:
+  service_date: 2026-09-02
+  course: two
+  delivery_company: two
+  vehicle: two
+  driver: two
+  cargo_category: two
+  client: two
+  store: two
+  volume: 9.99
+  unit: two
+  departure_at: 2026-09-02 22:24:47
+  arrival_at: 2026-09-02 22:24:47
+  created_by_id: 
+  updated_by_id: 

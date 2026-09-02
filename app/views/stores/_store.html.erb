@@ -1,0 +1,26 @@
+<div id="<%= dom_id store %>" class="w-full sm:w-auto my-5 space-y-5">
+  <div>
+    <strong class="block font-medium mb-1">Client:</strong>
+    <%= store.client_id %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Code:</strong>
+    <%= store.code %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Name:</strong>
+    <%= store.name %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Active:</strong>
+    <%= store.active? ? "Yes" : "No" %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Pending review:</strong>
+    <%= store.pending_review? ? "Yes" : "No" %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Created by:</strong>
+    <%= store.created_by_id %>
+  </div>
+</div>
