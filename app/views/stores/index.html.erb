@@ -1,32 +1,26 @@
 <% content_for :title, "店舗" %>
 
-<div class="w-full">
-  <% if notice.present? %>
-    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
+<div class="w-full space-y-5">
+  <div>
+    <h1 class="text-2xl font-bold text-slate-900">店舗</h1>
+    <p class="mt-1 text-sm text-slate-500"><%= current_user.admin? ? "表のセルを直接編集して一括保存できます。" : "登録済みの店舗を確認できます。" %></p>
+  </div>
+  <%= form_with url: stores_path, method: :get, class: "flex flex-col gap-2 sm:flex-row" do |form| %>
+    <%= form.collection_select :client_id, @clients, :id, :name, { include_blank: "すべての取引先", selected: params[:client_id] }, aria: { label: "取引先で絞り込み" }, class: "w-full rounded-lg border-slate-300 text-sm sm:max-w-xs" %>
+    <%= form.search_field :q, value: params[:q], placeholder: "名称をあいまい検索", aria: { label: "店舗名をあいまい検索" }, class: "w-full rounded-lg border-slate-300 text-sm sm:max-w-lg" %>
+    <%= form.submit "絞り込む", class: "rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700" %>
   <% end %>
 
-  <div class="flex justify-between items-center">
-    <h1 class="font-bold text-3xl">店舗</h1>
-    <% if current_user.admin? %><%= link_to "店舗を登録", new_store_path, class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white block font-medium" %><% end %>
-  </div>
-  <%= form_with url: stores_path, method: :get, class: "my-5 flex gap-2" do |form| %>
-    <%= form.search_field :q, value: params[:q], placeholder: "名称をあいまい検索", class: "w-full max-w-lg rounded-lg border-slate-300" %>
-    <%= form.submit "検索", class: "rounded-lg bg-slate-800 px-4 py-2 text-white" %>
-  <% end %>
-
-  <div id="stores" class="min-w-full divide-y divide-gray-200 space-y-5">
-    <% if @stores.any? %>
-      <% @stores.each do |store| %>
-        <div class="flex flex-col sm:flex-row justify-between items-center pb-5 sm:pb-0">
-          <%= render store %>
-          <div class="w-full sm:w-auto flex flex-col sm:flex-row space-x-2 space-y-2">
-            <%= link_to "詳細", store, class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-            <% if current_user.admin? %><%= link_to "編集", edit_store_path(store), class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %><% end %>
-          </div>
-        </div>
-      <% end %>
-    <% else %>
-      <p class="text-center my-10">No stores found.</p>
-    <% end %>
-  </div>
+  <%= render "shared/bulk_table",
+             records: @bulk_records,
+             model_class: Store,
+             bulk_path: bulk_update_stores_path,
+             editable: current_user.admin?,
+             columns: [
+               { key: :client_id, label: "取引先", type: :select, choices: @clients.map { |client| [client.name, client.id] } },
+               { key: :code, label: "店舗コード" },
+               { key: :name, label: "店舗名" },
+               { key: :pending_review, label: "審査状態", type: :badge },
+               { key: :active, label: "有効", type: :checkbox }
+             ] %>
 </div>

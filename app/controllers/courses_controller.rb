@@ -1,9 +1,12 @@
 class CoursesController < Admin::BaseController
+  include BulkEditable
+
   before_action :set_course, only: %i[ show edit update destroy ]
 
   # GET /courses or /courses.json
   def index
-    @courses = Course.all
+    @courses = Course.ordered
+    @bulk_records = @courses
   end
 
   # GET /courses/1 or /courses/1.json
@@ -66,5 +69,17 @@ class CoursesController < Admin::BaseController
     # Only allow a list of trusted parameters through.
     def course_params
       params.require(:course).permit(:code, :name, :active, :sort_order)
+    end
+
+    def bulk_edit_model
+      Course
+    end
+
+    def bulk_edit_attributes
+      %i[code name active sort_order]
+    end
+
+    def bulk_ignored_blank_attributes
+      %i[active sort_order]
     end
 end

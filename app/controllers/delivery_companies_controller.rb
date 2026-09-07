@@ -1,9 +1,12 @@
 class DeliveryCompaniesController < Admin::BaseController
+  include BulkEditable
+
   before_action :set_delivery_company, only: %i[ show edit update destroy ]
 
   # GET /delivery_companies or /delivery_companies.json
   def index
-    @delivery_companies = DeliveryCompany.all
+    @delivery_companies = DeliveryCompany.ordered
+    @bulk_records = @delivery_companies
   end
 
   # GET /delivery_companies/1 or /delivery_companies/1.json
@@ -66,5 +69,17 @@ class DeliveryCompaniesController < Admin::BaseController
     # Only allow a list of trusted parameters through.
     def delivery_company_params
       params.require(:delivery_company).permit(:code, :name, :active, :sort_order)
+    end
+
+    def bulk_edit_model
+      DeliveryCompany
+    end
+
+    def bulk_edit_attributes
+      %i[code name active sort_order]
+    end
+
+    def bulk_ignored_blank_attributes
+      %i[active sort_order]
     end
 end

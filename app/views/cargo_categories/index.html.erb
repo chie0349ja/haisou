@@ -1,29 +1,20 @@
-<% content_for :title, "Cargo categories" %>
+<% content_for :title, "荷物カテゴリ" %>
 
-<div class="w-full">
-  <% if notice.present? %>
-    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
-  <% end %>
-
-  <div class="flex justify-between items-center">
-    <h1 class="font-bold text-4xl">Cargo categories</h1>
-    <%= link_to "New cargo category", new_cargo_category_path, class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white block font-medium" %>
+<div class="w-full space-y-5">
+  <div>
+    <h1 class="text-2xl font-bold text-slate-900">荷物カテゴリ</h1>
+    <p class="mt-1 text-sm text-slate-500">表のセルを直接編集して一括保存できます。</p>
   </div>
 
-  <div id="cargo_categories" class="min-w-full divide-y divide-gray-200 space-y-5">
-    <% if @cargo_categories.any? %>
-      <% @cargo_categories.each do |cargo_category| %>
-        <div class="flex flex-col sm:flex-row justify-between items-center pb-5 sm:pb-0">
-          <%= render cargo_category %>
-          <div class="w-full sm:w-auto flex flex-col sm:flex-row space-x-2 space-y-2">
-            <%= link_to "Show", cargo_category, class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-            <%= link_to "Edit", edit_cargo_category_path(cargo_category), class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-            <%= button_to "Destroy", cargo_category, method: :delete, class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 text-white bg-red-600 hover:bg-red-500 font-medium cursor-pointer", data: { turbo_confirm: "Are you sure?" } %>
-          </div>
-        </div>
-      <% end %>
-    <% else %>
-      <p class="text-center my-10">No cargo categories found.</p>
-    <% end %>
-  </div>
+  <%= render "shared/bulk_table",
+             records: @bulk_records,
+             model_class: CargoCategory,
+             bulk_path: bulk_update_cargo_categories_path,
+             columns: [
+               { key: :code, label: "カテゴリコード" },
+               { key: :name, label: "カテゴリ名" },
+               { key: :cargo_category_group_id, label: "グループ", type: :select, choices: @cargo_category_groups.map { |group| [group.name, group.id] } },
+               { key: :active, label: "有効", type: :checkbox },
+               { key: :sort_order, label: "表示順", type: :number }
+             ] %>
 </div>

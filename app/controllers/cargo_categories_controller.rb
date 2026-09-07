@@ -1,9 +1,13 @@
 class CargoCategoriesController < Admin::BaseController
+  include BulkEditable
+
   before_action :set_cargo_category, only: %i[ show edit update destroy ]
 
   # GET /cargo_categories or /cargo_categories.json
   def index
-    @cargo_categories = CargoCategory.all
+    @cargo_categories = CargoCategory.includes(:cargo_category_group).ordered
+    @bulk_records = @cargo_categories
+    prepare_bulk_index
   end
 
   # GET /cargo_categories/1 or /cargo_categories/1.json
@@ -66,5 +70,21 @@ class CargoCategoriesController < Admin::BaseController
     # Only allow a list of trusted parameters through.
     def cargo_category_params
       params.require(:cargo_category).permit(:code, :name, :cargo_category_group_id, :active, :sort_order)
+    end
+
+    def bulk_edit_model
+      CargoCategory
+    end
+
+    def bulk_edit_attributes
+      %i[code name cargo_category_group_id active sort_order]
+    end
+
+    def bulk_ignored_blank_attributes
+      %i[active sort_order]
+    end
+
+    def prepare_bulk_index
+      @cargo_category_groups = CargoCategoryGroup.ordered
     end
 end

@@ -1,9 +1,15 @@
 class AllocationRatiosController < Admin::BaseController
+  include BulkEditable
+
   before_action :set_allocation_ratio, only: %i[ show edit update destroy ]
 
   # GET /allocation_ratios or /allocation_ratios.json
   def index
-    @allocation_ratios = AllocationRatio.all
+    @allocation_ratios = AllocationRatio
+      .includes(:cargo_category_group)
+      .order(:cargo_category_group_id, :effective_from)
+    @bulk_records = @allocation_ratios
+    prepare_bulk_index
   end
 
   # GET /allocation_ratios/1 or /allocation_ratios/1.json
@@ -66,5 +72,17 @@ class AllocationRatiosController < Admin::BaseController
     # Only allow a list of trusted parameters through.
     def allocation_ratio_params
       params.require(:allocation_ratio).permit(:cargo_category_group_id, :ratio, :effective_from, :effective_to)
+    end
+
+    def bulk_edit_model
+      AllocationRatio
+    end
+
+    def bulk_edit_attributes
+      %i[cargo_category_group_id ratio effective_from effective_to]
+    end
+
+    def prepare_bulk_index
+      @cargo_category_groups = CargoCategoryGroup.ordered
     end
 end

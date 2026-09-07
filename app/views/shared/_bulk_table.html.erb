@@ -1,0 +1,56 @@
+<% editable = local_assigns.fetch(:editable, true) %>
+<% deletable = local_assigns.fetch(:deletable, false) %>
+<% records = Array(records) %>
+<% persisted_records = records.select(&:persisted?) %>
+<% new_records = records.reject(&:persisted?) %>
+<% table = capture do %>
+  <div class="max-h-[70vh] overflow-auto">
+    <table class="min-w-full border-separate border-spacing-0 text-sm">
+      <thead class="sticky top-0 z-10 bg-slate-100">
+        <tr>
+          <% columns.each do |column| %>
+            <th scope="col" class="whitespace-nowrap border-b border-slate-200 px-3 py-2.5 text-left font-semibold text-slate-700"><%= column[:label] %></th>
+          <% end %>
+          <% if editable %>
+            <th scope="col" class="border-b border-slate-200 px-3 py-2.5 text-left font-semibold text-slate-700">操作</th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody data-bulk-editor-target="rows" class="divide-y divide-slate-200 bg-white">
+        <% persisted_records.each do |record| %>
+          <%= render "shared/bulk_row", record: record, row_key: record.id, columns: columns, editable: editable, deletable: deletable %>
+        <% end %>
+        <% new_records.each_with_index do |record, index| %>
+          <%= render "shared/bulk_row", record: record, row_key: "new_error_#{index}", columns: columns, editable: editable, deletable: false, new_row: true %>
+        <% end %>
+      </tbody>
+    </table>
+    <% if records.empty? %>
+      <p data-bulk-editor-target="empty" class="px-4 py-10 text-center text-sm text-slate-500">登録データはありません。</p>
+    <% end %>
+  </div>
+<% end %>
+
+<section class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+  <% if editable %>
+    <%= form_with url: bulk_path, method: :patch, data: { controller: "bulk-editor", action: "input->bulk-editor#update change->bulk-editor#update submit->bulk-editor#submit" }, class: "relative" do %>
+      <%= table %>
+      <template data-bulk-editor-target="template">
+        <%= render "shared/bulk_row", record: model_class.new, row_key: "__NEW_KEY__", columns: columns, editable: true, deletable: false, new_row: true %>
+      </template>
+      <div class="sticky bottom-0 z-20 flex flex-col gap-3 border-t border-slate-200 bg-white/95 px-4 py-3 shadow-[0_-6px_18px_rgba(15,23,42,0.08)] backdrop-blur sm:flex-row sm:items-center sm:justify-between">
+        <button type="button" data-action="bulk-editor#add" class="inline-flex items-center justify-center rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 font-medium text-sky-700 hover:bg-sky-100 focus:outline-none focus:ring-2 focus:ring-sky-500">
+          ＋ 新規行を追加
+        </button>
+        <div class="flex items-center justify-between gap-4 sm:justify-end">
+          <p class="text-sm text-slate-600" aria-live="polite"><span data-bulk-editor-target="count" class="font-semibold tabular-nums">0</span>件の行を変更</p>
+          <button type="submit" data-bulk-editor-target="submit" disabled class="rounded-lg bg-sky-600 px-5 py-2 font-semibold text-white hover:bg-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-slate-300">
+            一括保存
+          </button>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <%= table %>
+  <% end %>
+</section>

@@ -1,9 +1,13 @@
 class VehiclesController < Admin::BaseController
+  include BulkEditable
+
   before_action :set_vehicle, only: %i[ show edit update destroy ]
 
   # GET /vehicles or /vehicles.json
   def index
-    @vehicles = Vehicle.all
+    @vehicles = Vehicle.includes(:delivery_company).ordered
+    @bulk_records = @vehicles
+    prepare_bulk_index
   end
 
   # GET /vehicles/1 or /vehicles/1.json
@@ -66,5 +70,21 @@ class VehiclesController < Admin::BaseController
     # Only allow a list of trusted parameters through.
     def vehicle_params
       params.require(:vehicle).permit(:code, :delivery_company_id, :active, :sort_order)
+    end
+
+    def bulk_edit_model
+      Vehicle
+    end
+
+    def bulk_edit_attributes
+      %i[code delivery_company_id active sort_order]
+    end
+
+    def bulk_ignored_blank_attributes
+      %i[active sort_order]
+    end
+
+    def prepare_bulk_index
+      @delivery_companies = DeliveryCompany.ordered
     end
 end

@@ -1,9 +1,12 @@
 class UnitsController < Admin::BaseController
+  include BulkEditable
+
   before_action :set_unit, only: %i[ show edit update destroy ]
 
   # GET /units or /units.json
   def index
-    @units = Unit.all
+    @units = Unit.ordered
+    @bulk_records = @units
   end
 
   # GET /units/1 or /units/1.json
@@ -66,5 +69,17 @@ class UnitsController < Admin::BaseController
     # Only allow a list of trusted parameters through.
     def unit_params
       params.require(:unit).permit(:code, :name, :active, :sort_order)
+    end
+
+    def bulk_edit_model
+      Unit
+    end
+
+    def bulk_edit_attributes
+      %i[code name active sort_order]
+    end
+
+    def bulk_ignored_blank_attributes
+      %i[active sort_order]
     end
 end

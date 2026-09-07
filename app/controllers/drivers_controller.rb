@@ -1,9 +1,13 @@
 class DriversController < Admin::BaseController
+  include BulkEditable
+
   before_action :set_driver, only: %i[ show edit update destroy ]
 
   # GET /drivers or /drivers.json
   def index
-    @drivers = Driver.all
+    @drivers = Driver.includes(:delivery_company).ordered
+    @bulk_records = @drivers
+    prepare_bulk_index
   end
 
   # GET /drivers/1 or /drivers/1.json
@@ -66,5 +70,21 @@ class DriversController < Admin::BaseController
     # Only allow a list of trusted parameters through.
     def driver_params
       params.require(:driver).permit(:code, :name, :delivery_company_id, :active, :sort_order)
+    end
+
+    def bulk_edit_model
+      Driver
+    end
+
+    def bulk_edit_attributes
+      %i[code name delivery_company_id active sort_order]
+    end
+
+    def bulk_ignored_blank_attributes
+      %i[active sort_order]
+    end
+
+    def prepare_bulk_index
+      @delivery_companies = DeliveryCompany.ordered
     end
 end

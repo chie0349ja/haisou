@@ -17,7 +17,7 @@ class AllocationRatio < ApplicationRecord
     return if effective_from.blank? || effective_to.blank?
     return if effective_to >= effective_from
 
-    errors.add(:effective_to, "must be on or after the effective start date")
+    errors.add(:effective_to, "は適用開始日以降の日付にしてください")
   end
 
   def effective_period_must_not_overlap
@@ -34,6 +34,6 @@ class AllocationRatio < ApplicationRecord
 
     return unless overlapping.exists?
 
-    errors.add(:base, "effective period overlaps an existing allocation ratio")
+    errors.add(:base, "同じグループの適用期間が既存の按分比率と重複しています")
   end
 end

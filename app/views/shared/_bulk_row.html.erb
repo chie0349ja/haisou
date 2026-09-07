@@ -1,0 +1,78 @@
+<% new_row = local_assigns.fetch(:new_row, false) %>
+<% has_errors = record.errors.any? %>
+<% input_class = "block min-w-28 w-full rounded-md border-slate-300 px-2 py-1.5 text-sm shadow-sm focus:border-sky-500 focus:ring-sky-500" %>
+<% invalid_class = " border-red-500 bg-red-50" %>
+<% row_name = record.try(:name).presence || record.try(:code).presence || "新規行" %>
+
+<tr data-bulk-editor-target="row" data-new-row="<%= new_row %>" data-error-row="<%= has_errors %>" class="<%= has_errors ? "bg-red-50/40" : "hover:bg-slate-50/70" %>">
+  <% columns.each do |column| %>
+    <% attribute = column[:key] %>
+    <% value = record.public_send(attribute) %>
+    <% field_errors = record.errors[attribute] %>
+    <% invalid = field_errors.any? %>
+    <% field_name = "records[#{row_key}][#{attribute}]" %>
+    <% aria_label = "#{column[:label]}（#{row_name}）" %>
+    <td class="whitespace-nowrap px-3 py-2 align-top">
+      <% if editable %>
+        <% if column[:type] == :select %>
+          <select name="<%= field_name %>" aria-label="<%= aria_label %>" aria-invalid="<%= invalid %>" class="<%= input_class %><%= invalid ? invalid_class : "" %>">
+            <% if column.fetch(:include_blank, true) %><option value="">選択してください</option><% end %>
+            <% column[:choices].each do |label, option_value| %>
+              <option value="<%= option_value %>" <%= "selected" if value.to_s == option_value.to_s %>><%= label %></option>
+            <% end %>
+          </select>
+        <% elsif column[:type] == :checkbox %>
+          <input type="hidden" name="<%= field_name %>" value="0">
+          <label class="inline-flex min-h-8 items-center gap-2">
+            <input type="checkbox" name="<%= field_name %>" value="1" <%= "checked" if value %> aria-label="<%= aria_label %>" aria-invalid="<%= invalid %>" class="size-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500">
+            <span class="text-xs text-slate-600"><%= value ? "有効" : "無効" %></span>
+          </label>
+        <% elsif column[:type] == :badge %>
+          <% if value %>
+            <span class="inline-flex rounded-full bg-amber-100 px-2 py-1 text-xs font-semibold text-amber-800">審査待ち</span>
+          <% else %>
+            <span class="text-xs text-slate-500">確認済み</span>
+          <% end %>
+        <% else %>
+          <input type="<%= column.fetch(:type, :text) %>" name="<%= field_name %>" value="<%= value %>" aria-label="<%= aria_label %>" aria-invalid="<%= invalid %>"
+                 <% if column[:step] %>step="<%= column[:step] %>"<% end %>
+                 <% if column.key?(:min) %>min="<%= column[:min] %>"<% end %>
+                 <% if column.key?(:max) %>max="<%= column[:max] %>"<% end %>
+                 class="<%= input_class %><%= invalid ? invalid_class : "" %>">
+        <% end %>
+        <% if invalid %>
+          <p class="mt-1 max-w-52 whitespace-normal text-xs font-medium text-red-700"><%= field_errors.join("、") %></p>
+        <% end %>
+      <% else %>
+        <% if column[:type] == :select %>
+          <%= column[:choices].find { |_, option_value| option_value.to_s == value.to_s }&.first || "—" %>
+        <% elsif column[:type] == :checkbox %>
+          <span class="inline-flex rounded-full px-2 py-1 text-xs font-semibold <%= value ? "bg-emerald-100 text-emerald-800" : "bg-slate-100 text-slate-700" %>"><%= value ? "有効" : "無効" %></span>
+        <% elsif column[:type] == :badge %>
+          <% if value %><span class="inline-flex rounded-full bg-amber-100 px-2 py-1 text-xs font-semibold text-amber-800">審査待ち</span><% else %><span class="text-slate-500">確認済み</span><% end %>
+        <% else %>
+          <%= value.presence || "—" %>
+        <% end %>
+      <% end %>
+    </td>
+  <% end %>
+  <% if editable %>
+    <td class="px-3 py-2 align-top">
+      <% if new_row %>
+        <button type="button" data-action="bulk-editor#remove" class="inline-flex rounded-md px-2 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-500">追加を取消</button>
+      <% elsif deletable && record.persisted? %>
+        <%= link_to "削除", polymorphic_path(record), data: { turbo_method: :delete, turbo_confirm: "この行を削除します。よろしいですか？" }, class: "inline-flex rounded-md px-2 py-1.5 text-sm font-medium text-red-700 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500" %>
+      <% end %>
+    </td>
+  <% end %>
+</tr>
+<% if has_errors %>
+  <tr class="bg-red-50" data-bulk-editor-error-message>
+    <td colspan="<%= columns.length + (editable ? 1 : 0) %>" class="px-3 pb-3 pt-1">
+      <div role="alert" class="rounded-md border border-red-200 bg-white px-3 py-2 text-sm text-red-800">
+        <span class="font-semibold">この行を保存できません：</span>
+        <%= record.errors.full_messages.join("、") %>
+      </div>
+    </td>
+  </tr>
+<% end %>

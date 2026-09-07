@@ -4,24 +4,42 @@ Rails.application.routes.draw do
     collection do
       get :autocomplete
       post :quick_create
+      patch :bulk_update
     end
   end
   resources :clients do
     collection do
       get :autocomplete
       post :quick_create
+      patch :bulk_update
     end
   end
 
   scope "/admin" do
-    resources :allocation_ratios
-    resources :units
-    resources :cargo_categories
-    resources :cargo_category_groups
-    resources :drivers
-    resources :vehicles
-    resources :delivery_companies
-    resources :courses
+    resources :allocation_ratios do
+      patch :bulk_update, on: :collection
+    end
+    resources :units do
+      patch :bulk_update, on: :collection
+    end
+    resources :cargo_categories do
+      patch :bulk_update, on: :collection
+    end
+    resources :cargo_category_groups do
+      patch :bulk_update, on: :collection
+    end
+    resources :drivers do
+      patch :bulk_update, on: :collection
+    end
+    resources :vehicles do
+      patch :bulk_update, on: :collection
+    end
+    resources :delivery_companies do
+      patch :bulk_update, on: :collection
+    end
+    resources :courses do
+      patch :bulk_update, on: :collection
+    end
   end
 
   namespace :admin do

@@ -1,11 +1,14 @@
 class ClientsController < ApplicationController
+  include BulkEditable
+
   before_action :set_client, only: %i[ show edit update destroy ]
-  before_action :require_admin!, only: %i[ new create edit update destroy ]
+  before_action :require_admin!, only: %i[ new create edit update destroy bulk_update ]
 
   # GET /clients or /clients.json
   def index
     @clients = Client.order(:name)
     @clients = @clients.search_by_name(params[:q]) if params[:q].present?
+    @bulk_records = @clients
   end
 
   def autocomplete
@@ -83,6 +86,23 @@ class ClientsController < ApplicationController
     # Only allow a list of trusted parameters through.
     def client_params
       params.require(:client).permit(:code, :name, :active, :pending_review)
+    end
+
+    def bulk_edit_model
+      Client
+    end
+
+    def bulk_edit_attributes
+      %i[code name active]
+    end
+
+    def bulk_ignored_blank_attributes
+      %i[active]
+    end
+
+    def prepare_bulk_new_record(record)
+      record.created_by = current_user
+      record.pending_review = false
     end
 
     def require_admin!
