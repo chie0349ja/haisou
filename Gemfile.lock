@@ -162,13 +162,16 @@ GEM
       racc (~> 1.4)
     nokogiri (1.19.4-arm64-darwin)
       racc (~> 1.4)
+    nokogiri (1.19.4-x86_64-linux-gnu)
+      racc (~> 1.4)
     orm_adapter (0.5.0)
     parallel (1.28.0)
     parser (3.3.12.0)
       ast (~> 2.4.1)
       racc
-    pg (1.6.3-aarch64-linux)
-    pg (1.6.3-arm64-darwin)
+    pg (1.7.0-aarch64-linux)
+    pg (1.7.0-arm64-darwin)
+    pg (1.7.0-x86_64-linux)
     pg_search (2.3.7)
       activerecord (>= 6.1)
       activesupport (>= 6.1)
@@ -289,6 +292,7 @@ GEM
       tailwindcss-ruby (~> 4.0)
     tailwindcss-ruby (4.3.3-aarch64-linux-gnu)
     tailwindcss-ruby (4.3.3-arm64-darwin)
+    tailwindcss-ruby (4.3.3-x86_64-linux-gnu)
     thor (1.5.0)
     timeout (0.6.1)
     tsort (0.2.0)
@@ -320,6 +324,7 @@ GEM
 PLATFORMS
   aarch64-linux
   arm64-darwin-24
+  x86_64-linux
 
 DEPENDENCIES
   bootsnap
@@ -329,7 +334,7 @@ DEPENDENCIES
   devise
   importmap-rails
   jbuilder
-  pg (~> 1.1)
+  pg (~> 1.7)
   pg_search
   puma (>= 5.0)
   rails (~> 7.2.3, >= 7.2.3.2)
